@@ -10,7 +10,7 @@ GIT
       sassc (~> 2.3)
 
 GEM
-  remote: https://rubygems.org/
+  remote: http://rubygems.org/
   specs:
     actioncable (6.1.7.6)
       actionpack (= 6.1.7.6)
