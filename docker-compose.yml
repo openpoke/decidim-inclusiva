@@ -1,0 +1,69 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    pull_policy: build
+    depends_on:
+      - app
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /root/certificados/2024/:/etc/ssl/certs
+    restart: ${RESTART_POLICY:-always}
+  app:
+    build: .
+    pull_policy: build
+    volumes:
+      - /root/storage:/app/storage
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - RUN_RAILS=true
+      - RUN_SIDEKIQ=true
+      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:decidim@db/decidim}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-42f85688373ef7256c0942d7cf8b3cf1e19fd6efae2ef8d7cc9262d99cbba15e2a6a427f73881cef62f85c7ff0d6e72c701ff2de86c5a598c0853e128357e42f}
+      - DECIDIM_FORCE_SSL=${DECIDIM_FORCE_SSL:-false}
+      - QUEUE_ADAPTER=${QUEUE_ADAPTER:-sidekiq}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - DECIDIM_ENABLE_HTML_HEADER_SNIPPETS=${DECIDIM_ENABLE_HTML_HEADER_SNIPPETS:-true}
+      - DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS=${DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS:-0}
+      - CHANGE_ACTIVE_STEP=${CHANGE_ACTIVE_STEP:-disabled}
+      - SEND_REMINDERS=${SEND_REMINDERS:-enabled}
+      - WEEKLY_NOTIFICATIONS_DIGEST=${WEEKLY_NOTIFICATIONS_DIGEST:-enabled}
+      - DAILY_NOTIFICATIONS_DIGEST=${DAILY_NOTIFICATIONS_DIGEST:-enabled}
+      - SMTP_STARTTLS_AUTO=${SMTP_STARTTLS_AUTO:-true}
+      - SMTP_USERNAME
+      - SMTP_PASSWORD
+      - SMTP_ADDRESS
+      - SMTP_DOMAIN=${SMTP_DOMAIN:-decidimoseducacioninclusiva.uma.es}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - DECIDIM_MAILER_SENDER
+      - MAPS_API_KEY
+      - MAPS_PROVIDER=${MAPS_PROVIDER:-here}
+      - RACK_ATTACK_SECRET
+    depends_on:
+      - db
+      - redis
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-decidim}
+      - POSTGRES_DB=${POSTGRES_DB:-decidim}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: ${RESTART_POLICY:-always}
+  redis:
+    image: redis
+    volumes:
+      - redis_data:/data
+    restart: ${RESTART_POLICY:-always}
+volumes:
+  pg_data:
+  redis_data:
+  decidim_uploads:
+  decidim_storage:
