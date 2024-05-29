@@ -11,7 +11,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - /root/certificados/2024/:/etc/ssl/certs
+      - /root/certificados/2024/:/etc/ssl/certs/inclusiva
     restart: ${RESTART_POLICY:-always}
   app:
     build: .
