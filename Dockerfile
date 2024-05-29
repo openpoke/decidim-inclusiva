@@ -23,7 +23,8 @@ COPY ./package.json /app/package.json
 COPY ./Gemfile /app/Gemfile
 COPY ./Gemfile.lock /app/Gemfile.lock
 
-RUN gem install bundler:$(grep -A 1 'BUNDLED WITH' Gemfile.lock | tail -n 1 | xargs) && \
+RUN gem update --system --source http://rubygems.org/ && \
+    gem install bundler:$(grep -A 1 'BUNDLED WITH' Gemfile.lock | tail -n 1 | xargs) && \
     bundle config --local without 'development test' && \
     bundle install -j4 --retry 3 && \
     # Remove unneeded gems
