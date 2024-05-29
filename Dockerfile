@@ -83,7 +83,7 @@ RUN rm -rf node_modules tmp/cache vendor/bundle test spec app/packs .git
 # This image is for production env only
 FROM ruby:3.1-slim AS final
 
-RUN apt-get update && \
+RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y postgresql-client \
     imagemagick \
     curl \
