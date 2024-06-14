@@ -5,11 +5,11 @@ source "http://rubygems.org"
 ruby RUBY_VERSION
 
 gem "decidim", "0.28.1"
-# gem "decidim-conferences", "0.28.1"
+gem "decidim-conferences", "0.28.1"
 # gem "decidim-design", "0.28.1"
 # gem "decidim-elections", "0.28.1"
 # gem "decidim-initiatives", "0.28.1"
-# gem "decidim-templates", "0.28.1"
+gem "decidim-templates", "0.28.1"
 
 gem "decidim-decidim_awesome", github: "decidim-ice/decidim-module-decidim_awesome", branch: "develop"
 
